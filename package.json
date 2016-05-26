@@ -1,6 +1,6 @@
 {
   "name": "artifactory-rest-api",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A module for interacting with Artifactory API",
   "main": "lib/ArtifactoryApi.js",
   "repository": {

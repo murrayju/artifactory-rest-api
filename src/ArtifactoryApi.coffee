@@ -29,20 +29,22 @@ fs = require('fs')
 md5File = require('md5-file')
 
 class ArtifactoryApi
-  v4Root = '/artifactory/api/'
-  v3Root = '/api/'
+  v4Root = '/artifactory/'
+  v3Root = '/'
   constructor: (@url, @basicHttpAuth, version=4) ->
     while @url[@url.length - 1] is '/'
       @url = @url.substr(0, @url.length - 1)
     if version < 4
-      @apiRoot = "#{@url}#{v3Root}"
+      @urlRoot = "#{@url}#{v3Root}"
     else
-      @apiRoot = "#{@url}#{v4Root}"
+      @urlRoot = "#{@url}#{v4Root}"
     @_request = request.defaults({
       headers:
         Authorization: 'Basic ' + @basicHttpAuth
       strictSSL: false
     })
+    
+  apiRoot: -> "#{@urlRoot}api/"
 
   _qRequest: (url, method='GET') ->
     Q.Promise (resolve, reject) =>
@@ -60,15 +62,15 @@ class ArtifactoryApi
 
   checkApiVersion: ->
     # try version 4 api first
-    @_getJSON("#{@url}#{v4Root}system/version")
+    @_getJSON("#{@url}#{v4Root}api/system/version")
       .then (resp) =>
-        @apiRoot = "#{@url}#{v4Root}"
+        @urlRoot = "#{@url}#{v4Root}"
         return resp.version
       .catch =>
         # try version 3 instead
-        @_getJSON("#{@url}#{v3Root}system/version")
+        @_getJSON("#{@url}#{v3Root}api/system/version")
           .then (resp) =>
-            @apiRoot = "#{@url}#{v3Root}"
+            @urlRoot = "#{@url}#{v3Root}"
             return resp.version
 
   ### Get file info from Artifactory server. The result is provided in a json object.
@@ -78,7 +80,7 @@ class ArtifactoryApi
   ###
   getFileInfo: (repoKey, remoteFilePath) ->
     remoteFilePath = remoteFilePath.substr(1) while remoteFilePath[0] is '/'
-    @_getJSON("#{@apiRoot}storage/#{repoKey}/#{remoteFilePath}")
+    @_getJSON("#{@apiRoot()}storage/#{repoKey}/#{remoteFilePath}")
 
   ###
   Checks if the file exists.
@@ -88,7 +90,7 @@ class ArtifactoryApi
   ###
   fileExists: (repoKey, remoteFilePath) ->
     remoteFilePath = remoteFilePath.substr(1) while remoteFilePath[0] is '/'
-    @_request("#{@apiRoot}#{repoKey}/#{remoteFilePath}", 'head').then (resp) ->
+    @_request("#{@apiRoot()}#{repoKey}/#{remoteFilePath}", 'head').then (resp) ->
       switch resp.statusCode
         when 200 then true
         when 404 then false
@@ -96,7 +98,7 @@ class ArtifactoryApi
 
   deleteItem: (repoKey, remoteFilePath) ->
     remoteFilePath = remoteFilePath.substr(1) while remoteFilePath[0] is '/'
-    @_qRequest("#{@url}/#{repoKey}/#{remoteFilePath}", 'DELETE').then (resp) ->
+    @_qRequest("#{@urlRoot}#{repoKey}/#{remoteFilePath}", 'DELETE').then (resp) ->
       # Expect 204 response
       return Q.reject(resp.statusCode) unless resp.statusCode is 204
 
@@ -126,7 +128,7 @@ class ArtifactoryApi
         stream = if isRemote then @_request(fileToUpload) else fs.createReadStream(fileToUpload)
         # In any other case then proceed with *upload*
         deferred = Q.defer()
-        stream.pipe @_request.put "#{@apiRoot}storage/#{repoKey}/#{remoteFilePath}", (error, response) ->
+        stream.pipe @_request.put "#{@apiRoot()}storage/#{repoKey}/#{remoteFilePath}", (error, response) ->
           return deferred.reject(error.message) if error
           # We expect a CREATED return code.
           unless response.statusCode is 201
@@ -150,7 +152,7 @@ class ArtifactoryApi
       return Q.reject('The destination folder ' + path.dirname(destinationPath) + ' does not exist.')
 
     deferred = Q.defer()
-    url = "#{@apiRoot}storage/#{repoKey}/#{remoteFilePath}"
+    url = "#{@apiRoot()}storage/#{repoKey}/#{remoteFilePath}"
     @_request
       .get(url)
       .on 'response', (resp) =>
