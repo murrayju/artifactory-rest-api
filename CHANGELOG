@@ -16,9 +16,14 @@ v0.0.2:
 v0.0.3:
   date: 2015-08-21
   changes:
-    - Fix incorrectly named response variable in downloadFile 
+    - Fix incorrectly named response variable in downloadFile
 
 v0.0.4:
   date: 2016-05-25
   changes:
     - Port to coffeescript
+
+v0.0.5:
+  date: 2016-05-25
+  changes:
+    - Add deleteItem API

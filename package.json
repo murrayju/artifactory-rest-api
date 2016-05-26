@@ -1,6 +1,6 @@
 {
   "name": "artifactory-rest-api",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A module for interacting with Artifactory API",
   "main": "lib/ArtifactoryApi.js",
   "repository": {
@@ -30,8 +30,7 @@
     "md5-file": "2"
   },
   "scripts": {
-    "prepublish": "coffee -c -o lib/ src/",
-    "postinstall": "coffee -c -o lib/ src/"
+    "prepublish": "coffee -c -o lib/ src/"
   },
   "bugs": {
     "url": "https://github.com/murrayju/artifactory-rest-api/issues"

@@ -94,7 +94,7 @@ class ArtifactoryApi
         when 404 then false
         else Q.reject(resp.statusCode)
 
-  deleteFile: (repoKey, remoteFilePath) ->
+  deleteItem: (repoKey, remoteFilePath) ->
     remoteFilePath = remoteFilePath.substr(1) while remoteFilePath[0] is '/'
     @_qRequest("#{@url}/#{repoKey}/#{remoteFilePath}", 'DELETE').then (resp) ->
       # Expect 204 response

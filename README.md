@@ -134,3 +134,18 @@ artifactory.fileExists('libs-release-local', '/my/jar/1.0/jar-1.0.jar').then(fun
   console.log('ERROR: ' + err);
 });
 ```
+
+### deleteItem(repoKey, remoteFilePath)
+Deletes the file or folder from the server. You need to provide the repoKey and the path to the file on the server.
+
+API: [DeleteItem](https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-DeleteItem)
+
+Usage example:
+```javascript
+var artifactory = new ArtifactoryApi('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
+artifactory.deleteFile('libs-release-local', '/my/jar/1.0/jar-1.0.jar').then(function () {
+  // success
+}).fail(function (err) {
+  console.log('ERROR: ' + err);
+});
+```
