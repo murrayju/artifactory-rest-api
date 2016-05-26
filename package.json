@@ -1,20 +1,16 @@
 {
-  "name": "artifactory-api",
-  "version": "0.0.3",
+  "name": "artifactory-rest-api",
+  "version": "0.0.4",
   "description": "A module for interacting with Artifactory API",
-  "main": "index.js",
+  "main": "lib/ArtifactoryApi.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cgadam/artifactory-api.git"
+    "url": "https://github.com/murrayju/artifactory-rest-api.git"
   },
   "author": {
-    "name": "Christian Adam",
-    "email": "christian.g.adam@gmail.com"
+    "name": "Justin Murray",
+    "email": "murrayju@gmail.com"
   },
-  "contributors": [{
-    "name": "William Beard",
-    "email": "disenno@gmail.com"
-  }],
   "license": "MIT",
   "keywords": [
     "Artifactory",
@@ -25,14 +21,20 @@
     "Javascript",
     "js"
   ],
+  "devDependencies": {
+    "coffee-script": "1"
+  },
   "dependencies": {
-    "underscore": "1.8.3",
-    "q": "1.4.1",
-    "request": "2.58.0",
-    "md5-file": "2.0.3"
+    "q": "1",
+    "request": "2",
+    "md5-file": "2"
+  },
+  "scripts": {
+    "prepublish": "coffee -c -o lib/ src/",
+    "postinstall": "coffee -c -o lib/ src/"
   },
   "bugs": {
-    "url": "https://github.com/cgadam/artifactory-api/issues"
+    "url": "https://github.com/murrayju/artifactory-rest-api/issues"
   },
-  "homepage": "https://github.com/cgadam/artifactory-api"
+  "homepage": "https://github.com/murrayju/artifactory-rest-api"
 }

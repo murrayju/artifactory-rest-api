@@ -1,5 +1,5 @@
-# Artifactory API
-The Artifactory API module provides you a friendly way of interacting with [Artifactory REST API](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API)
+# Artifactory REST API
+The `ArtifactoryApi` class provides you with a friendly way of interacting with the [Artifactory REST API](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API). Supports both v3 and v4 APIs where possible.
 
 ## Authentication
 You need to provide basic http credentials when creating a new instance. Just provide username:password in base 64.
@@ -12,13 +12,13 @@ You need to provide basic http credentials when creating a new instance. Just pr
   Usage example:
 
   ```javascript
-  var artifactory = new ArtifactoryAPI('https:<myServerURL>', "dXNlcjpwYXNzd29yZA==");
+  var artifactory = new ArtifactoryApi('https:<myServerURL>', "dXNlcjpwYXNzd29yZA==");
   ```
 
 ## Actions
 All actions return a [Q Promise](https://github.com/kriskowal/q).
 
-### getFileInfo(repoKey, remotefilePath)
+### getFileInfo(repoKey, remoteFilePath)
 Provides all the info related to a file in a json object. You need to provide the repoKey and the path to the file.
 
 API: [FileInfo](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-FileInfo)
@@ -26,7 +26,7 @@ API: [FileInfo](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API
   Usage example:
 
   ```javascript
-  var artifactory = new ArtifactoryAPI('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
+  var artifactory = new ArtifactoryApi('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
   artifactory.getFileInfo('libs-release-local','/org/acme/lib/ver/lib-ver.pom').then(function(fileInfoJson){
     console.log(JSON.stringify(fileInfoJson));
   });
@@ -34,7 +34,7 @@ API: [FileInfo](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API
 
   That would print to console something like this:
 
-  ```json
+  ```javascript
   {
     "uri": "http://localhost:8080/artifactory/api/storage/libs-release-local/org/acme/lib/ver/lib-ver.pom",
     "downloadUri": "http://localhost:8080/artifactory/libs-release-local/org/acme/lib/ver/lib-ver.pom",
@@ -60,7 +60,7 @@ API: [FileInfo](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API
   ```
   All this info will be available in the *fileInfoJson* object that is returned as part of the promise resolution.
 
-### uploadFile(repoKey, remotefilePath, localfilePath, forceUpload)
+### uploadFile(repoKey, remoteFilePath, localfilePath, forceUpload)
 Uploads a file to artifactory. All you need to provide is the repoKey, the remote path where you want to upload the file and the local path of the file you want to upload. If the file already exists in the server it will fail unless you provide the forceUpload flag with a true value. In that case, it will overwite the file in the server.
 
 API: [DeployArtifact](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-DeployArtifact)
@@ -68,7 +68,7 @@ API: [DeployArtifact](http://www.jfrog.com/confluence/display/RTF/Artifactory+RE
 Usage example:
 
 ```javascript
-var artifactory = new ArtifactoryAPI('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
+var artifactory = new ArtifactoryApi('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
 artifactory.uploadFile('libs-release-local', '/my/jar/1.0/jar-1.0.jar', '/Users/user/artifacts/jar-1.0.jar').then(function (uploadInfo) {
   console.log('UPLOAD INFO IS: ' + JSON.stringify(uploadInfo));
 }).fail(function (err) {
@@ -77,30 +77,30 @@ artifactory.uploadFile('libs-release-local', '/my/jar/1.0/jar-1.0.jar', '/Users/
 ```
 This would print to console the creation info:
 
-```json
+```javascript
 {
-"uri": "http://localhost:8080/artifactory/libs-release-local/my/jar/1.0/jar-1.0.jar",
-"downloadUri": "http://localhost:8080/artifactory/libs-release-local/my/jar/1.0/jar-1.0.jar",
-"repo": "libs-release-local",
-"path": "/my/jar/1.0/jar-1.0.jar",
-"created": ISO8601 (yyyy-MM-dd'T'HH:mm:ss.SSSZ),
-"createdBy": "userY",
-"size": "1024", //bytes
-"mimeType": "application/java-archive",
-"checksums":
-{
-        "md5" : string,
-        "sha1" : string
-    },
-"originalChecksums":{
-        "md5" : string,
-        "sha1" : string
-    }
+  "uri": "http://localhost:8080/artifactory/libs-release-local/my/jar/1.0/jar-1.0.jar",
+  "downloadUri": "http://localhost:8080/artifactory/libs-release-local/my/jar/1.0/jar-1.0.jar",
+  "repo": "libs-release-local",
+  "path": "/my/jar/1.0/jar-1.0.jar",
+  "created": ISO8601 (yyyy-MM-dd'T'HH:mm:ss.SSSZ),
+  "createdBy": "userY",
+  "size": "1024", //bytes
+  "mimeType": "application/java-archive",
+  "checksums":
+  {
+    "md5" : string,
+    "sha1" : string
+  },
+  "originalChecksums":{
+    "md5" : string,
+    "sha1" : string
+  }
 }
 ```
 All this info will be available in the *uploadInfo* object that is returned as part of the promise resolution.
 
-### downloadFile(repoKey, remotefilePath, destinationFile, checkChecksum)
+### downloadFile(repoKey, remoteFilePath, destinationFile, checkChecksum)
 Downloads a file from a given repository/path into a specific file. You need to provide the repoKey, the remote path where the file is located and a destination file. The folder that will contain the destination file must exist! Additionally you can indicate whether you want to perform a checksum verification as part of the download or not.
 
 API: [RetrieveArtifact](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-RetrieveArtifact)
@@ -108,7 +108,7 @@ API: [RetrieveArtifact](http://www.jfrog.com/confluence/display/RTF/Artifactory+
 Usage example:
 
 ```javascript
-var artifactory = new ArtifactoryAPI('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
+var artifactory = new ArtifactoryApi('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
 artifactory.downloadFile('libs-release-local', '/my/jar/1.0/jar-1.0.jar', '/Users/user/Downloads/myJar.jar', true).then(function (result) {
   console.log(result);
 }).fail(function (err) {
@@ -117,14 +117,14 @@ artifactory.downloadFile('libs-release-local', '/my/jar/1.0/jar-1.0.jar', '/User
 ```
 The result object returned as part of the promise resolution is just a string indicating the final result of the operation.
 
-### fileExists(repoKey, remotefilePath)
+### fileExists(repoKey, remoteFilePath)
 Verifies if the file exists in the server. You need to provide the repoKey and the path to the file in the server.
 
 API: [RetrieveArtifact](http://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-RetrieveArtifact) but only asking for the **HEAD** instead of doing a **GET**.
 
 Usage example:
 ```javascript
-var artifactory = new ArtifactoryAPI('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
+var artifactory = new ArtifactoryApi('http://localhost:8080', "dXNlcjpwYXNzd29yZA==");
 artifactory.fileExists('libs-release-local', '/my/jar/1.0/jar-1.0.jar').then(function (exists) {
   if(exists){
     console.log('YES, file exists!');
